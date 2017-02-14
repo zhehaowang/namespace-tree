@@ -191,8 +191,13 @@ function insertToTree(data) {
     idx ++;
     treeNode = child;
   } while (child !== null && idx < nameSize);
+  
+  var displaySize = nameSize;
+  if (maxTreeDepth !== undefined && maxTreeDepth > 0) {
+    displaySize = Math.min(maxTreeDepth, nameSize);
+  }
 
-  for (var j = idx; j < nameSize; j++) {
+  for (var j = idx; j < displaySize; j++) {
     var newChild = {
       "name": dataName.get(j).toEscapedString(),
       "children": []
@@ -208,7 +213,8 @@ function insertToTree(data) {
   }
   
   // insert data content object if not present
-  if (treeNode["children"].length === 0) {
+  // only insert this "data content" node, if the full name is displayed
+  if (displaySize === nameSize && treeNode["children"].length === 0) {
     var content = "";
     try {
       content = data.getContent().buf().toString('binary');

@@ -2,11 +2,20 @@
 function connectFace() {
   // document.getElementById('expandAll').onclick = function () { treeView.expandAll(); };
   // document.getElementById('collapseAll').onclick = function () { treeView.collapseAll(); };
+  freshOnly = document.getElementById('fresh-data').checked;
+  maxTreeDepth = document.getElementById('max-depth').value;
+  if (maxTreeDepth == "") {
+    maxTreeDepth = -1;
+  } else {
+    maxTreeDepth = parseInt(maxTreeDepth);
+  }
+
   document.getElementById('pause').onclick = function () { 
     if (paused) {
       document.getElementById('pause').innerText = "Pause";
       paused = false;
       for (var i; i < queuedInterests.length; i++) {
+        queuedInterests[i].setMustBeFresh(freshOnly);
         face.expressInterest(queuedInterests[i], onData, onTimeout);
       }
       queuedInterests = [];
@@ -63,6 +72,7 @@ function expressInterestWithExclusion(prefix, exclusion, leftmost, filterCertOrC
     console.log("with exclude: " + interest.getExclude().toUri());
   }
   if (!paused) {
+    interest.setMustBeFresh(freshOnly);
     face.expressInterest(interest, onData, onTimeout);
   } else {
     queuedInterests.push(interest);
@@ -194,6 +204,7 @@ function onTimeout(interest) {
   var newInterest = new Interest(interest);
   newInterest.refreshNonce();
   if (!paused) {
+    newInterest.setMustBeFresh(freshOnly);
     face.expressInterest(newInterest, onData, onTimeout);
   } else {
     queuedInterests.push(newInterest);

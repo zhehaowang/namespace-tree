@@ -18,6 +18,9 @@
     var prefix;
     var treeView;
 
+    var maxTreeDepth = -1;
+    var freshOnly = false;
+
     var paused = false;
     var queuedInterests = [];
   </script>
@@ -25,18 +28,23 @@
 
 <body>
 
-  <div id="connect-section">
+  <div id="connect-section" style="float:left; width:30%">
     <p>Host face: <br><input type="text" id="host" value="192.168.100.130"></input></p>
     <p>Track prefix: <br><input type="text" id="prefix" value="/home"></input></p>
     <p><button id="connect" onclick="connectFace()">Connect Face</button></p>
-    <p><button id="connect" onclick="buildDummyTree()">Dummy Data</button></p>
+    <p><button id="dummy-tree" onclick="buildDummyTree()">Dummy Data</button></p>
+    <p><button id="pause">Pause</button> </p>
+  </div>
+ 
+  <div id="options-section" style="float:left; width:30%">
+    <p>Max tree depth: <br><input type="text" id="max-depth" value=""></input></p>
+    <p>Fresh data only: <br><input type="checkbox" id="fresh-data" checked></input></p>
   </div>
  
   <div id="tree-container">
     <!-- <button id="expandAll">Expand All</button> <br>
     <button id="collapseAll">Collapse All</button> <br>
      -->
-    <p><button id="pause">Pause</button> </p>
     <div id="tree"></div>
   </div>
 
