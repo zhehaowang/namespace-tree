@@ -70,12 +70,56 @@ function expressInterestWithExclusion(prefix, exclusion, leftmost, filterCertOrC
   
 }
 
+function getRandomInt(min, max) {
+  var min = Math.ceil(min);
+  var max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function getRandomChar()
+{
+  var text = "";
+  var candidates = "ABCD";
+
+  for( var i = 0; i < 1; i++ )
+      text += candidates.charAt(getRandomInt(0, candidates.length - 1));
+
+  return text;
+}
+
+function buildDummyTree() {
+  setInterval(function () {
+    var components = getRandomInt(2, 6);
+    var dataName = new Name();
+    for (var i = 0; i < components; i ++) {
+      dataName.append(getRandomChar());
+    }
+    var data = new Data(dataName);
+    if (!paused) {
+      insertToTree(data);
+    }
+  }, 2000);
+
+  document.getElementById('pause').onclick = function () { 
+    if (paused) {
+      document.getElementById('pause').innerText = "Pause";
+      paused = false;
+    } else {
+      document.getElementById('pause').innerText = "Resume";
+      paused = true;
+    }
+  };
+}
+
 function onData(interest, data) {
-  console.log("got data: " + data.getName().toUri());
+  var dataName = data.getName();
+  console.log("got data: " + dataName.toUri());
+  if (dataName.size() == 0) {
+    return;
+  }
   insertToTree(data);
 
   var interestName = interest.getName();
-  var dataName = data.getName();
   // data is longer than interest, we probably should ask with exclusion
   if (dataName.size() > interestName.size()) {
     // if data name is longer than interest name by only one component

@@ -209,11 +209,17 @@ function insertToTree(data) {
   
   // insert data content object if not present
   if (treeNode["children"].length === 0) {
-    var content = data.getContent().buf().toString('binary');
+    var content = "";
+    try {
+      content = data.getContent().buf().toString('binary');
+    } catch (e) {
+      content = "NULL";
+    }
+
     var contentNode = {
-        "name": content,
-        "is_content": true
-      };
+      "name": content,
+      "is_content": true
+    };
     // append to last treeNode
     treeNode["children"].push(contentNode);
   }
