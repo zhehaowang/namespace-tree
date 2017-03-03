@@ -13,6 +13,8 @@ var treeData = [
   }
 ];
 
+var colorSet = ["#d1ebbb", "#7bafd0", "#deb276", "#92c3ad", "#f49158"];
+
 // ************** Generate the tree diagram  *****************
 var width_total = 4000;
 var height_total = 600;
@@ -20,7 +22,7 @@ var height_total = 600;
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
   width = width_total - margin.right - margin.left,
   height = height_total - margin.top - margin.bottom;
-  
+
 var i = 0,
   duration = 750,
   root;
@@ -43,7 +45,7 @@ var svg = d3.select("#tree").append("svg")
 root = treeData[0];
 root.x0 = height / 2;
 root.y0 = 0;
-  
+
 update(root);
 
 d3.select(self.frameElement).style("height", "500px");
@@ -67,10 +69,27 @@ function update(source) {
     .attr("class", "node")
     .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
     .on("click", click);
-  
+
   nodeEnter.append("circle")
     .attr("r", 1e-6)
-    .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+    .style("fill", function(d) {
+      if (d._children) {
+        return "#fff"
+      }
+      return colorSet[d.depth%5];
+    })
+    .style("stroke", function(d) {
+      if (d._children) {
+        return "#000"
+      }
+      return colorSet[d.depth%5];
+    })
+    .style("stroke-width", function(d) {
+      if (d._children) {
+        return "2px";
+      }
+      return "1.5px";
+    });
 
   nodeEnter.append("text")
     .attr("x", function(d) { return d.children || d._children ? 0 : 0; })
@@ -92,12 +111,11 @@ function update(source) {
 
   nodeUpdate.select("circle")
     .attr("r", 10)
-    .style("fill", function(d) { 
-      if (d.is_content === true) {
-        return "yellow"; 
-      } else {
-        return d._children ? "lightsteelblue" : "#fff"; 
+    .style("fill", function(d) {
+      if (d._children) {
+        return "#fff"
       }
+      return colorSet[d.depth%5];
     });
 
   nodeUpdate.select("text")
@@ -106,8 +124,8 @@ function update(source) {
   // Transition exiting nodes to the parent's new position.
   var nodeExit = node.exit().transition()
     .duration(duration)
-    .attr("transform", function(d) { 
-      return "translate(" + source.y + "," + source.x + ")"; 
+    .attr("transform", function(d) {
+      return "translate(" + source.y + "," + source.x + ")";
     })
     .remove();
 
@@ -175,7 +193,7 @@ function findAmongChildren(node, str) {
 
 function insertToTree(data) {
   var dataName = data.getName();
-  
+
   var idx = 0;
   var nameSize = dataName.size();
 
@@ -191,7 +209,7 @@ function insertToTree(data) {
     idx ++;
     treeNode = child;
   } while (child !== null && idx < nameSize);
-  
+
   var displaySize = nameSize;
   if (maxTreeDepth !== undefined && maxTreeDepth > 0) {
     displaySize = Math.min(maxTreeDepth, nameSize);
@@ -211,7 +229,7 @@ function insertToTree(data) {
       changed = treeNode;
     }
   }
-  
+
   // insert data content object if not present
   // only insert this "data content" node, if the full name is displayed
   if (displaySize === nameSize && treeNode["children"].length === 0) {
@@ -229,7 +247,7 @@ function insertToTree(data) {
     // append to last treeNode
     treeNode["children"].push(contentNode);
   }
-  
+
   if (changed !== null) {
     update(changed);
   }
