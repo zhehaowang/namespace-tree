@@ -18,6 +18,7 @@ var colorSet = ["#d1ebbb", "#7bafd0", "#deb276", "#92c3ad", "#f49158"];
 // ************** Generate the tree diagram  *****************
 var width_total = 4000;
 var height_total = 600;
+//document.body.clientHeight - document.getElementById("connect-section").offsetHeight- document.getElementById("option-section").offsetHeight;
 
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
   width = width_total - margin.right - margin.left,

@@ -97,6 +97,19 @@ function getRandomChar()
   return text;
 }
 
+function fullScreen(){
+  if (document.getElementById("connect-section").style.display != "none") {
+    document.getElementById("connect-section").style.display = "none";
+    document.getElementById("options-section").style.display = "none";
+    document.getElementById("full-screen").textContent = "Back";
+  }
+  else {
+    document.getElementById("connect-section").style.display = "block";
+    document.getElementById("options-section").style.display = "block";
+    document.getElementById("full-screen").textContent = "View Full Screen";
+  }
+}
+
 function buildDummyTree() {
   setInterval(function () {
     var components = getRandomInt(2, 6);
