@@ -1,4 +1,5 @@
-
+/*******************************      FONT     ********************************/
+p{font-family:verdana;}
 
 /*******************************      HEADER     ********************************/
 #header{
@@ -17,18 +18,19 @@
 /*******************************      MENU     ********************************/
 #menu{
 	background-color: #505050;
-	height:90px;
+	height: 80px;
 }
 
 #menu ul {
     list-style:none;
-    font-family: palatino linotype;
+    font-family: verdana;
     font-size: 22px;
     letter-spacing: -1px;
     line-height: 1.2em;
     float:left;
     clear:both;
 }
+
 #menu ul li{
     float:left;
 	margin-right:20px;
@@ -40,7 +42,6 @@
     background-color:#505050;
     width:170px;
     text-align:center;
-    border:4px double #fff;
 }
 #menu ul li a span{
     display:block;
@@ -51,7 +52,6 @@
 }
 #menu ul li a:hover{
     background-color:#fff;
-    border:4px double #ddd;
 }
 #menu ul li a:hover span.title{
     color:#333;
