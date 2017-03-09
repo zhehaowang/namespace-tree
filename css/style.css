@@ -1,0 +1,109 @@
+
+
+/*******************************      HEADER     ********************************/
+#header{
+	margin: 0 auto;
+	background-color:#52bad5;
+	text-align: center;
+	height: 120px;
+}
+
+#header h1{
+	font-family:verdana;
+	font-size:40;
+	color: #fff;
+}
+
+/*******************************      MENU     ********************************/
+#menu{
+	background-color: #505050;
+	height:90px;
+}
+
+#menu ul {
+    list-style:none;
+    font-family: palatino linotype;
+    font-size: 22px;
+    letter-spacing: -1px;
+    line-height: 1.2em;
+    float:left;
+    clear:both;
+}
+#menu ul li{
+    float:left;
+	margin-right:20px;
+}
+#menu ul li a{
+    display:block;
+    text-decoration:none;
+    padding:5px 10px 5px 10px;
+    background-color:#505050;
+    width:170px;
+    text-align:center;
+    border:4px double #fff;
+}
+#menu ul li a span{
+    display:block;
+}
+#menu ul li a span.title{
+    color:#fff;
+    padding-bottom:5px;
+}
+#menu ul li a:hover{
+    background-color:#fff;
+    border:4px double #ddd;
+}
+#menu ul li a:hover span.title{
+    color:#333;
+}
+
+/*****************************      CONTROLLER     ******************************/
+
+#connect-section{
+	float: left;
+	clear: both;
+	width: 260px;
+	margin: 20px;
+}
+
+#options-section{
+	width: 260px;
+	margin: 20px;
+}
+
+#dummy-data-controller{
+	width: 260px;
+	margin-top: 20px;
+}
+
+
+/*****************************      BOTTOM     ******************************/
+#bottom-left{
+	height: 90px;
+	width: 50%;
+	background-color: #52bad5;
+	float: left;
+}
+
+#bottom-right{
+	height: 90px;
+	width: 50%;
+	background-color: #01b3d1;
+	float: left;
+}
+
+#bottom{
+	height: 110px;
+	background-color: #505050;
+	text-align: center;
+	clear:both;
+}
+
+#bottom h1{
+	font-family:verdana;
+	font-size: 20px;
+	color: #fff;
+}
+
+
+

@@ -101,11 +101,21 @@ function fullScreen(){
   if (document.getElementById("connect-section").style.display != "none") {
     document.getElementById("connect-section").style.display = "none";
     document.getElementById("options-section").style.display = "none";
+	document.getElementById("header").style.display = "none";
+	document.getElementById("menu").style.display = "none";
+	document.getElementById("bottom-left").style.display = "none";
+	document.getElementById("bottom-right").style.display = "none";
+	document.getElementById("bottom").style.display = "none";
     document.getElementById("full-screen").textContent = "Back";
   }
   else {
     document.getElementById("connect-section").style.display = "block";
     document.getElementById("options-section").style.display = "block";
+	document.getElementById("header").style.display = "block";
+	document.getElementById("menu").style.display = "block";
+	document.getElementById("bottom-left").style.display = "block";
+	document.getElementById("bottom-right").style.display = "block";
+	document.getElementById("bottom").style.display = "block";
     document.getElementById("full-screen").textContent = "View Full Screen";
   }
 }

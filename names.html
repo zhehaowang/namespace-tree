@@ -13,7 +13,7 @@
 
   <link rel="stylesheet" href="css/tree.css" />
   <link rel="stylesheet" href="css/multiColumnTemplate.css" type="text/css">
-
+  <link rel="stylesheet" href="css/style.css" />
   <script type="text/javascript" src="js/d3.min.js"></script>
   <script type="text/javascript" src="js/ndn.js"></script>
 
@@ -31,64 +31,65 @@
   </script>
 </head>
 
-<body>
-
-<div class="container">
-  <header>
-    <div class="primary_header">
-      <h1 class="title">NDN NAMESPACE TREE</h1>
-    </div>
-    <nav class="secondary_header" id="menu">
-      <ul>
-        <li>ABOUT</li>
-        <li>CONTACT</li>
-      </ul>
-    </nav>
-  </header>
-
-  <section>
-    <h2 class="noDisplay">Main Content</h2>
-    <article class="left_article">
-      <div id="connect-section" style="float:left; width:20%">
-        <p>Host face: <br><input type="text" id="host" value="192.168.100.130"></input></p>
-        <p>Track prefix: <br><input type="text" id="prefix" value="/home"></input></p>
-        <p><button id="connect" onclick="connectFace()">Connect Face</button></p>
-      </div>
-     
-      <div id="options-section" style="float:left; width:20%">
-        <p>Max tree depth: <br><input type="text" id="max-depth" value=""></input></p>
-        <p>Fresh data only: <br><input type="checkbox" id="fresh-data" checked></input></p>
-      </div>
-
-      <div id="dummy-data-controller" style="float:left; width:20%">
-        <p><button id="dummy-tree" onclick="buildDummyTree()">Dummy Data</button></p>
-        <p><button id="pause">Pause</button> </p>
-        <p><button onclick="fullScreen()" id="full-screen">View Full Screen</button></p>
-      </div>
-
-      <div id="tree-container" style="clear:both;">    
-        <!-- <button id="expandAll">Expand All</button> <br>
-        <button id="collapseAll">Collapse All</button> <br>
-         -->
-        <div id="tree"></div>
-      </div>
-
-    </article>
-  </section>
-
-  <div class="row"></div>
-  <div class="row blockDisplay">
-    <div class="column_half left_half">
-      <h2 class="column_title"></h2>
-    </div>
-    <div class="column_half right_half">
-      <h2 class="column_title"></h2>
-    </div>
+<body style="margin: 0 auto; max-width: 960px;">
+<!---------------------------- HEADER & MENU ----------------------------->
+  <div id="header">
+	<br/>
+	<h1>NDN NAMESPACE TREE</h1>
   </div>
   
-  <footer class="secondary_header footer">
-    <div class="copyright">&copy;2017 - <strong>Named Data Networking namespace tree</strong></div>
-  </footer>
+  <div id="menu">
+	<ul>
+		<li>
+			<a href=""><span class="title">PARAMETERS</span></a>
+        </li>
+        <li>
+			<a href=""><span class="title">ABOUT</span></a>
+        </li>
+		<li>
+			<a href=""><span class="title">CONTACT</span></a>
+        </li>
+  </div>
+
+ <!-------------------------------- CONTROLLER ------------------------------->
+<div class="wrap"> 
+  <div id="connect-section">
+    <p>Host face: <br><input type="text" id="host" value="192.168.100.130"></input></p>
+    <p>Track prefix: <br><input type="text" id="prefix" value="/home"></input></p>
+    <p><button id="connect" onclick="connectFace()">Connect Face</button></p>
+  </div>
+ 
+  <div id="options-section" style="float:left;">
+    <p>Max tree depth: <br><input type="text" id="max-depth" value=""></input></p>
+    <p>Fresh data only: <br><input type="checkbox" id="fresh-data" checked></input></p>
+  </div>
+
+  <div id="dummy-data-controller" style="float:left;">
+    <p><button id="dummy-tree" onclick="buildDummyTree()">Dummy Data</button></p>
+    <p><button id="pause">Pause</button> </p>
+    <p><button onclick="fullScreen()" id="full-screen">View Full Screen</button></p>
+  </div>
+</div>
+
+ <!----------------------------------- TREE ----------------------------------->
+  <div id="tree-container" style="clear:both;">    
+    <!-- <button id="expandAll">Expand All</button> <br>
+    <button id="collapseAll">Collapse All</button> <br>
+     -->
+    <div id="tree"></div>
+  </div>
+ </div>
+ 
+  <!----------------------------------- BOTTOM ----------------------------------->
+ <br/><br/>
+ <div id="bottom-left">
+ </div>
+ <div id="bottom-right">
+ </div>
+ <div id="bottom">
+ <br/><br/>
+ <h1>&copy;2017 - NAME DATA NETWORKING NAMESPACE TREE</h1>
+ </div>
 
   <script type="text/javascript" src="js/tree.js"></script>
   <script type="text/javascript" src="js/name-consumer.js"></script>
