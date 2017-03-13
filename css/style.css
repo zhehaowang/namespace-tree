@@ -1,46 +1,47 @@
 /*******************************      FONT     ********************************/
-p{font-family:verdana;}
+p{font-family:verdana; font-size:14px;}
 
 /*******************************      HEADER     ********************************/
 #header{
 	margin: 0 auto;
 	background-color:#52bad5;
 	text-align: center;
-	height: 120px;
+	height: 70px;
 }
 
 #header h1{
 	font-family:verdana;
-	font-size:40;
+	font-size: 26px;
 	color: #fff;
+	line-height: 0px;
 }
 
 /*******************************      MENU     ********************************/
 #menu{
 	background-color: #505050;
-	height: 80px;
+	height: 50px;
 }
 
 #menu ul {
     list-style:none;
     font-family: verdana;
-    font-size: 22px;
+    font-size: 18px;
     letter-spacing: -1px;
-    line-height: 1.2em;
     float:left;
     clear:both;
+	line-height: 0px;
 }
 
 #menu ul li{
     float:left;
-	margin-right:20px;
+	margin-right:15px;
 }
 #menu ul li a{
     display:block;
     text-decoration:none;
     padding:5px 10px 5px 10px;
     background-color:#505050;
-    width:170px;
+    width:120px;
     text-align:center;
 }
 #menu ul li a span{
@@ -48,7 +49,7 @@ p{font-family:verdana;}
 }
 #menu ul li a span.title{
     color:#fff;
-    padding-bottom:5px;
+    padding:5px;
 }
 #menu ul li a:hover{
     background-color:#fff;
@@ -63,37 +64,37 @@ p{font-family:verdana;}
 	float: left;
 	clear: both;
 	width: 260px;
-	margin: 20px;
+	margin: 0px 20px;
 }
 
 #options-section{
 	width: 260px;
-	margin: 20px;
+	margin: 0px 20px;
 }
 
 #dummy-data-controller{
 	width: 260px;
-	margin-top: 20px;
+	margin-top: 0px;
 }
 
 
 /*****************************      BOTTOM     ******************************/
 #bottom-left{
-	height: 90px;
+	height: 55px;
 	width: 50%;
 	background-color: #52bad5;
 	float: left;
 }
 
 #bottom-right{
-	height: 90px;
+	height: 55px;
 	width: 50%;
 	background-color: #01b3d1;
 	float: left;
 }
 
 #bottom{
-	height: 110px;
+	height: 80px;
 	background-color: #505050;
 	text-align: center;
 	clear:both;
@@ -101,8 +102,9 @@ p{font-family:verdana;}
 
 #bottom h1{
 	font-family:verdana;
-	font-size: 20px;
+	font-size: 18px;
 	color: #fff;
+	line-height: 0px;
 }
 
 
