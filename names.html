@@ -32,25 +32,24 @@
 </head>
 
 <body style="margin: 0 auto; max-width: 960px;">
-<!-- HEADER & MENU -->
+  <!-- HEADER & MENU -->
   <div id="header">
-	<br/>
-	<h1>NDN NAMESPACE TREE</h1>
+	  <br/>
+    <h1>NDN NAMESPACE TREE</h1>
   </div>
   
   <div id="menu">
-	<ul>
-        <li>
-			<a href=""><span class="title" style="font-family:verdana">ABOUT</span></a>
+    <ul>
+      <li>
+			  <a href=""><span class="title" style="font-family:verdana">ABOUT</span></a>
         </li>
-		<li>
-			<a href=""><span class="title" style="font-family:verdana">CONTACT</span></a>
-        </li>
-	</ul>
+		  <li>
+			  <a href=""><span class="title" style="font-family:verdana">CONTACT</span></a>
+      </li>
+	  </ul>
   </div>
 
- <!-- CONTROLLER -->
-<div class="wrap"> 
+  <!-- CONTROLLER -->
   <div id="connect-section">
     <p>Host face: <br><input type="text" id="host" value="192.168.100.130"></input></p>
     <p>Track prefix: <br><input type="text" id="prefix" value="/home"></input></p>
@@ -67,30 +66,26 @@
     <p><button id="pause">Pause</button> </p>
     <p><button onclick="fullScreen()" id="full-screen">View Full Screen</button></p>
   </div>
-</div>
 
- <!-- TREE -->
-  <div id="tree-container" style="clear:both;">    
-    <!-- <button id="expandAll">Expand All</button> <br>
-    <button id="collapseAll">Collapse All</button> <br>
-     -->
+  <!-- TREE -->
+  <div id="tree-container" style="clear:both;">
     <div id="tree"></div>
   </div>
- </div>
  
   <!-- BOTTOM -->
- <br/><br/>
- <div id="bottom-left">
- </div>
- <div id="bottom-right">
- </div>
- <div id="bottom">
- <br/><br/>
- <h1>&copy;2017 - NAME DATA NETWORKING NAMESPACE TREE</h1>
- </div>
+  <br/>
+  <br/>
+ 
+  <div id="bottom-left"></div>
+  <div id="bottom-right"></div>
+  <div id="bottom">
+    <br/>
+    <br/>
+    <h1>&copy;2017 - NAME DATA NETWORKING NAMESPACE TREE</h1>
+  </div>
 
   <script type="text/javascript" src="js/tree.js"></script>
   <script type="text/javascript" src="js/name-consumer.js"></script>
-</div>
+
 </body>
 </html>
