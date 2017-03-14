@@ -1,47 +1,50 @@
+*{margin:0px; padding:0px;}
+
 /*******************************      FONT     ********************************/
-p{font-family:verdana; font-size:14px;}
+p{font-family:verdana; font-size:12px; margin:2px;}
 
 /*******************************      HEADER     ********************************/
 #header{
 	margin: 0 auto;
 	background-color:#52bad5;
 	text-align: center;
-	height: 70px;
+	height: 40px;
+	margin-top: 0px;
 }
 
 #header h1{
 	font-family:verdana;
-	font-size: 26px;
+	font-size: 21px;
 	color: #fff;
-	line-height: 0px;
+	line-height: 35px;
+	letter-spacing: 3px;
 }
 
 /*******************************      MENU     ********************************/
 #menu{
 	background-color: #505050;
-	height: 50px;
+	height: 30px;
 }
 
 #menu ul {
     list-style:none;
-    font-family: verdana;
-    font-size: 18px;
     letter-spacing: -1px;
     float:left;
     clear:both;
-	line-height: 0px;
+	line-height: 12px;
+	margin:0px;
 }
 
 #menu ul li{
     float:left;
-	margin-right:15px;
+	font-size: 14px;
 }
 #menu ul li a{
     display:block;
     text-decoration:none;
-    padding:5px 10px 5px 10px;
+    padding:4px 5px;
     background-color:#505050;
-    width:120px;
+    width:110px;
     text-align:center;
 }
 #menu ul li a span{
@@ -59,42 +62,50 @@ p{font-family:verdana; font-size:14px;}
 }
 
 /*****************************      CONTROLLER     ******************************/
+#controller{
+	float:left;
+	background-color: #e2e2e2;
+	width: 850px;
+}
 
 #connect-section{
 	float: left;
 	clear: both;
-	width: 260px;
-	margin: 0px 20px;
+	width: 220px;
+	margin: 2px 20px;
+	background-color: #e2e2e2;
 }
 
 #options-section{
-	width: 260px;
-	margin: 0px 20px;
+	width: 240px;
+	margin: 2px 40px;
+	background-color: #e2e2e2;
 }
 
 #dummy-data-controller{
-	width: 260px;
-	margin-top: 0px;
+	width: 220px;
+	margin: 2px 20px;
+	background-color: #e2e2e2;
 }
 
 
 /*****************************      BOTTOM     ******************************/
 #bottom-left{
-	height: 55px;
+	height: 35px;
 	width: 50%;
 	background-color: #52bad5;
 	float: left;
 }
 
 #bottom-right{
-	height: 55px;
+	height: 35px;
 	width: 50%;
 	background-color: #01b3d1;
 	float: left;
 }
 
 #bottom{
-	height: 80px;
+	height: 55px;
 	background-color: #505050;
 	text-align: center;
 	clear:both;
@@ -102,9 +113,9 @@ p{font-family:verdana; font-size:14px;}
 
 #bottom h1{
 	font-family:verdana;
-	font-size: 18px;
+	font-size: 16px;
 	color: #fff;
-	line-height: 0px;
+	line-height: 55px;
 }
 
 

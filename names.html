@@ -31,11 +31,10 @@
   </script>
 </head>
 
-<body style="margin: 0 auto; max-width: 960px;">
+<body style="margin: 0 auto; max-width: 850px;">
   <!-- HEADER & MENU -->
   <div id="header">
-	  <br/>
-    <h1>NDN NAMESPACE TREE</h1>
+    <h1>/home</h1>
   </div>
   
   <div id="menu">
@@ -50,23 +49,25 @@
   </div>
 
   <!-- CONTROLLER -->
+  <div id="controller">
   <div id="connect-section">
-    <p>Host face: <br><input type="text" id="host" value="192.168.100.130"></input></p>
-    <p>Track prefix: <br><input type="text" id="prefix" value="/home"></input></p>
-    <p><button id="connect" onclick="connectFace()">Connect Face</button></p>
+    <p>Host face: &nbsp;&nbsp;&nbsp;<input type="text" id="host" value="192.168.100.130" style="width:115px;"></input></p>
+    <p>Track prefix: <input type="text" id="prefix" value="/home" style="width:115px;"></input></p>
+    <p><button style="margin-left:112px;margin-right:0px;" id="connect" onclick="connectFace()">Connect Face</button></p>
   </div>
  
   <div id="options-section" style="float:left;">
-    <p>Max tree depth: <br><input type="text" id="max-depth" value=""></input></p>
-    <p>Fresh data only: <br><input type="checkbox" id="fresh-data" checked></input></p>
+    <p>Max tree depth: <input type="text" id="max-depth" value="" style="width:115px;"></input></p>
+    <p>Fresh data only: <input type="checkbox" id="fresh-data" checked></input></p>
   </div>
 
   <div id="dummy-data-controller" style="float:left;">
-    <p><button id="dummy-tree" onclick="buildDummyTree()">Dummy Data</button></p>
-    <p><button id="pause">Pause</button> </p>
-    <p><button onclick="fullScreen()" id="full-screen">View Full Screen</button></p>
+    <p><button style="width:115px;" id="dummy-tree" onclick="buildDummyTree()">Dummy Data</button></p>
+    <p><button style="width:115px;" id="pause">Pause</button> </p>
+    <p><button style="width:115px;" onclick="fullScreen()" id="full-screen">View Full Screen</button></p>
   </div>
-
+  </div>
+  
   <!-- TREE -->
   <div id="tree-container" style="clear:both;">
     <div id="tree"></div>
@@ -79,8 +80,6 @@
   <div id="bottom-left"></div>
   <div id="bottom-right"></div>
   <div id="bottom">
-    <br/>
-    <br/>
     <h1>&copy;2017 - NAME DATA NETWORKING NAMESPACE TREE</h1>
   </div>
 
