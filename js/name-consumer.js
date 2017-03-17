@@ -31,6 +31,14 @@ function connectFace() {
   
   // For this demo, hardcode intended interest names
   expressInterestWithExclusion(new Name(prefix));
+  
+  // Sausage debug functionalities:
+  // var data1 = new Data(new Name("/a/b/c"));
+  // insertToTree(data1);
+  // var data2 = new Data(new Name("/a/c/b"));
+  // insertToTree(data2);
+  // var data3 = new Data(new Name("/a/c/d"));
+  // insertToTree(data3);
 }
 
 // Internal mechanisms
@@ -101,21 +109,21 @@ function fullScreen(){
   if (document.getElementById("connect-section").style.display != "none") {
     document.getElementById("connect-section").style.display = "none";
     document.getElementById("options-section").style.display = "none";
-	document.getElementById("header").style.display = "none";
-	document.getElementById("menu").style.display = "none";
-	document.getElementById("bottom-left").style.display = "none";
-	document.getElementById("bottom-right").style.display = "none";
-	document.getElementById("bottom").style.display = "none";
+    document.getElementById("header").style.display = "none";
+    document.getElementById("menu").style.display = "none";
+    document.getElementById("bottom-left").style.display = "none";
+    document.getElementById("bottom-right").style.display = "none";
+    document.getElementById("bottom").style.display = "none";
     document.getElementById("full-screen").textContent = "Back";
   }
   else {
     document.getElementById("connect-section").style.display = "block";
     document.getElementById("options-section").style.display = "block";
-	document.getElementById("header").style.display = "block";
-	document.getElementById("menu").style.display = "block";
-	document.getElementById("bottom-left").style.display = "block";
-	document.getElementById("bottom-right").style.display = "block";
-	document.getElementById("bottom").style.display = "block";
+    document.getElementById("header").style.display = "block";
+    document.getElementById("menu").style.display = "block";
+    document.getElementById("bottom-left").style.display = "block";
+    document.getElementById("bottom-right").style.display = "block";
+    document.getElementById("bottom").style.display = "block";
     document.getElementById("full-screen").textContent = "View Full Screen";
   }
 }
@@ -127,6 +135,7 @@ function buildDummyTree() {
     for (var i = 0; i < components; i ++) {
       dataName.append(getRandomChar());
     }
+    console.log("Dummy: adding data name " + dataName.toUri());
     var data = new Data(dataName);
     if (!paused) {
       insertToTree(data);

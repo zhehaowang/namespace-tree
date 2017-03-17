@@ -46,12 +46,13 @@ var svg = d3.select("#tree").append("svg")
 root = treeData[0];
 // root.x0 = height / 2;
 // root.y0 = 0;
+var treeNodeMerged = clone(root);
 
-update(root);
+update(treeNodeMerged, treeNodeMerged);
 
 d3.select(self.frameElement).style("height", "500px");
 
-function update(source) {
+function update(root, source) {
 
   // Compute the new tree layout.
   var nodes = tree.nodes(root).reverse(),
@@ -139,7 +140,7 @@ function update(source) {
   nodeExit.select("text")
     .style("fill-opacity", 1e-6);
 
-  // Update the links…
+  // Update the links
   var link = svg.selectAll("path.link")
     .data(links, function(d) { return d.target.id; });
 
@@ -181,7 +182,7 @@ function click(d) {
     d.children = d._children;
     d._children = null;
   }
-  update(d);
+  update(treeNodeMerged, d);
 }
 
 /* original function */
@@ -224,7 +225,7 @@ function insertToTree(data) {
       "name": dataName.get(j).toEscapedString(),
       "children": []
     };
-    if (!("children" in treeNode)) {
+    if (treeNode["children"] === undefined) {
       treeNode["children"] = [];
     }
     treeNode["children"].push(newChild);
@@ -253,6 +254,73 @@ function insertToTree(data) {
   }
 
   if (changed !== null) {
-    update(changed);
+    // we update the first changed node to merge "sausage" links and emphasize branching
+    treeNodeMerged = clone(root);
+    mergeTreeLink(treeNodeMerged);
+    
+    console.log("merged:");
+    debugTree(treeNodeMerged);
+    console.log("root:");
+    debugTree(root);
+    
+    update(treeNodeMerged, treeNodeMerged);
+  }
+}
+
+function debugTree(node) {
+  if (node === undefined) {
+    return;
+  }
+  console.log(node["name"]);
+  for (var idx in node["children"]) {
+    debugTree(node["children"][idx]);
+  }
+}
+
+function clone(obj) {
+  if (obj === null || typeof(obj) !== 'object' || 'isActiveClone' in obj)
+    return obj;
+
+  if (obj instanceof Date)
+    var temp = new obj.constructor(); //or new Date(obj);
+  else
+    var temp = obj.constructor();
+
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      obj['isActiveClone'] = null;
+      temp[key] = clone(obj[key]);
+      delete obj['isActiveClone'];
+    }
+  }
+
+  return temp;
+}
+
+function mergeTreeLink(node) {
+  if (node !== undefined) {
+    if (node["is_content"] === true) {
+      return;
+    }
+
+    var temp = node;
+    while (temp["children"] !== undefined && temp["children"].length == 1) {
+      var child = temp["children"][0];
+      // if this node's only children is not a content node
+      if (child["is_content"] === true) {
+        break;
+      }
+      if (node["name"] == "/") {
+        node["name"] = "/" + child["name"];
+      } else {
+        node["name"] = node["name"] + "/" + child["name"];
+      }
+      node["children"] = child["children"];
+      temp = child;
+    }
+
+    for (var idx in node["children"]) {
+      mergeTreeLink(node["children"][idx]);
+    }
   }
 }
