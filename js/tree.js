@@ -1,13 +1,10 @@
 /************************************************
  * D3 sync tree render function
  ************************************************/
-// var tree = [{
-//   "name": "/",
-//   "children": []
-// }]
 var treeData = [
   {
     "name": "/",
+    "components": [],
     "parent": "null",
     "children": []
   }
@@ -48,11 +45,12 @@ root = treeData[0];
 // root.y0 = 0;
 var treeNodeMerged = clone(root);
 
-update(treeNodeMerged, treeNodeMerged);
+update(root);
 
 d3.select(self.frameElement).style("height", "500px");
 
-function update(root, source) {
+function update(source) {
+  // Summary about how this D3 .update(), .enter(), .exit(), .transition() abstraction works
 
   // Compute the new tree layout.
   var nodes = tree.nodes(root).reverse(),
@@ -122,9 +120,16 @@ function update(root, source) {
       }
       return colorSet[d.depth%5];
     });
-
+  
   nodeUpdate.select("text")
-    .style("fill-opacity", 1);
+    .style("fill-opacity", 1)
+    .text(function(d) {
+      if (d.name.length <= cutOffLength || d.is_content === true) {
+        return d.name;
+      } else {
+        return d.name.substring(0, cutOffLength);
+      }
+    });
 
   // Transition exiting nodes to the parent's new position.
   var nodeExit = node.exit().transition()
@@ -182,14 +187,14 @@ function click(d) {
     d.children = d._children;
     d._children = null;
   }
-  update(treeNodeMerged, d);
+  update(d);
 }
 
 /* original function */
 
 function findAmongChildren(node, str) {
   for (var child in node["children"]) {
-    if (node["children"][child]["name"] == str) {
+    if (node["children"][child]["components"][0] == str) {
       return node["children"][child];
     }
   }
@@ -203,41 +208,99 @@ function insertToTree(data) {
   var nameSize = dataName.size();
 
   var treeNode = root;
-  var child = {};
   var changed = null;
 
-  do {
-    child = findAmongChildren(treeNode, dataName.get(idx).toEscapedString());
-    if (child == null) {
-      break;
-    }
-    idx ++;
-    treeNode = child;
-  } while (child !== null && idx < nameSize);
+  var isDone = false;
 
-  var displaySize = nameSize;
-  if (maxTreeDepth !== undefined && maxTreeDepth > 0) {
-    displaySize = Math.min(maxTreeDepth, nameSize);
-  }
-
-  for (var j = idx; j < displaySize; j++) {
-    var newChild = {
-      "name": dataName.get(j).toEscapedString(),
-      "children": []
-    };
+  while (!isDone) {
     if (treeNode["children"] === undefined) {
       treeNode["children"] = [];
     }
-    treeNode["children"].push(newChild);
-    treeNode = newChild;
-    if (changed === null) {
+    // if (treeNode["children"].length == 0) {
+    //   // no more children to try, we append the rest to the last component
+    //   while (idx < nameSize) {
+    //     treeNode["components"].push(dataName.get(idx).toEscapedString());
+    //     treeNode["name"] = treeNode["components"].join("/");
+    //     idx ++;
+    //   }
+    //   isDone = true;
+    //   changed = treeNode;
+    //   break;
+    // }
+    
+    for (var child in treeNode["children"]) {
+      var tempNode = treeNode["children"][child];
+      console.log("has: " + tempNode["components"][0]);
+      console.log("want: " + dataName.get(idx).toEscapedString());
+      if (tempNode["components"][0] == dataName.get(idx).toEscapedString()) {
+        // this child matches the initial component
+        idx += 1;
+        for (var i = 1; i < tempNode["components"].length; i++) {
+          if (tempNode["components"][i] != dataName.get(idx).toEscapedString()) {
+            // we cannot fully match with this node, need to break this node into two
+            remainingComponents = tempNode["components"].slice(i, tempNode["components"].length);
+            var remainingChild = {
+              "name": remainingComponents.join("/"),
+              "components": remainingComponents,
+              "children": tempNode["children"]
+            };
+
+            var newChildComponents = [];
+            while (idx < nameSize) {
+              newChildComponents.push(dataName.get(idx).toEscapedString());
+              idx ++;
+            }
+
+            var newChild = {
+              "name": newChildComponents.join("/"),
+              "components": newChildComponents,
+              "children": []
+            };
+
+            tempNode["components"] = tempNode["components"].slice(0, i);
+            tempNode["children"] = [newChild, remainingChild];
+            tempNode["name"] = tempNode["components"].join("/");
+            
+            changed = tempNode;
+            treeNode = newChild;
+
+            isDone = true;
+            break;
+          }
+        }
+        // we can fully match with this node, need to try its children
+        if (!isDone) {
+          treeNode = tempNode;
+        } else {
+          break;
+        }
+      }
+    }
+
+    if (!isDone) {
+      // no children of tree node can match, we need to insert new nodes
+      var newChildComponents = [];
+      while (idx < nameSize) {
+        newChildComponents.push(dataName.get(idx).toEscapedString());
+        idx += 1;
+      }
+
+      var newChild = {
+        "name": newChildComponents.join("/"),
+        "components": newChildComponents,
+        "children": []
+      };
+
+      treeNode["children"].push(newChild);
+      isDone = true;
       changed = treeNode;
+      treeNode = newChild;
     }
   }
 
   // insert data content object if not present
   // only insert this "data content" node, if the full name is displayed
-  if (displaySize === nameSize && treeNode["children"].length === 0) {
+  if (treeNode["children"].length === 0) {
     var content = "";
     try {
       content = data.getContent().buf().toString('binary');
@@ -247,31 +310,22 @@ function insertToTree(data) {
 
     var contentNode = {
       "name": content,
+      "components": [content],
       "is_content": true
     };
     // append to last treeNode
     treeNode["children"].push(contentNode);
+    changed = treeNode;
   }
 
-  if (changed !== null) {
-    // we update the first changed node to merge "sausage" links and emphasize branching
-    treeNodeMerged = clone(root);
-    mergeTreeLink(treeNodeMerged);
-    
-    console.log("merged:");
-    debugTree(treeNodeMerged);
-    console.log("root:");
-    debugTree(root);
-    
-    update(treeNodeMerged, treeNodeMerged);
-  }
+  update(root);
 }
 
 function debugTree(node) {
   if (node === undefined) {
     return;
   }
-  console.log(node["name"]);
+  console.log(node["components"].join("/"));
   for (var idx in node["children"]) {
     debugTree(node["children"][idx]);
   }
@@ -295,32 +349,4 @@ function clone(obj) {
   }
 
   return temp;
-}
-
-function mergeTreeLink(node) {
-  if (node !== undefined) {
-    if (node["is_content"] === true) {
-      return;
-    }
-
-    var temp = node;
-    while (temp["children"] !== undefined && temp["children"].length == 1) {
-      var child = temp["children"][0];
-      // if this node's only children is not a content node
-      if (child["is_content"] === true) {
-        break;
-      }
-      if (node["name"] == "/") {
-        node["name"] = "/" + child["name"];
-      } else {
-        node["name"] = node["name"] + "/" + child["name"];
-      }
-      node["children"] = child["children"];
-      temp = child;
-    }
-
-    for (var idx in node["children"]) {
-      mergeTreeLink(node["children"][idx]);
-    }
-  }
 }

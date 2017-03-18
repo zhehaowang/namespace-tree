@@ -31,14 +31,6 @@ function connectFace() {
   
   // For this demo, hardcode intended interest names
   expressInterestWithExclusion(new Name(prefix));
-  
-  // Sausage debug functionalities:
-  // var data1 = new Data(new Name("/a/b/c"));
-  // insertToTree(data1);
-  // var data2 = new Data(new Name("/a/c/b"));
-  // insertToTree(data2);
-  // var data3 = new Data(new Name("/a/c/d"));
-  // insertToTree(data3);
 }
 
 // Internal mechanisms
@@ -129,28 +121,40 @@ function fullScreen(){
 }
 
 function buildDummyTree() {
-  setInterval(function () {
-    var components = getRandomInt(2, 6);
-    var dataName = new Name();
-    for (var i = 0; i < components; i ++) {
-      dataName.append(getRandomChar());
-    }
-    console.log("Dummy: adding data name " + dataName.toUri());
-    var data = new Data(dataName);
-    if (!paused) {
-      insertToTree(data);
-    }
-  }, 2000);
+  // Sausage debug functionalities:
+  var data1 = new Data(new Name("/a/b/c"));
+  insertToTree(data1);
+  setTimeout(function () {
+    var data2 = new Data(new Name("/a/c/b"));
+    insertToTree(data2);
+    setTimeout(function() {
+      var data3 = new Data(new Name("/a/c/d"));
+      insertToTree(data3);
+    }, 1000);
+  }, 1000);
 
-  document.getElementById('pause').onclick = function () { 
-    if (paused) {
-      document.getElementById('pause').innerText = "Pause";
-      paused = false;
-    } else {
-      document.getElementById('pause').innerText = "Resume";
-      paused = true;
-    }
-  };
+  // setInterval(function () {
+  //   var components = getRandomInt(2, 6);
+  //   var dataName = new Name();
+  //   for (var i = 0; i < components; i ++) {
+  //     dataName.append(getRandomChar());
+  //   }
+  //   console.log("Dummy: adding data name " + dataName.toUri());
+  //   var data = new Data(dataName);
+  //   if (!paused) {
+  //     insertToTree(data);
+  //   }
+  // }, 2000);
+
+  // document.getElementById('pause').onclick = function () { 
+  //   if (paused) {
+  //     document.getElementById('pause').innerText = "Pause";
+  //     paused = false;
+  //   } else {
+  //     document.getElementById('pause').innerText = "Resume";
+  //     paused = true;
+  //   }
+  // };
 }
 
 function onData(interest, data) {
