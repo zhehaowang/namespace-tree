@@ -121,40 +121,29 @@ function fullScreen(){
 }
 
 function buildDummyTree() {
-  // Sausage debug functionalities:
-  var data1 = new Data(new Name("/a/b/c"));
-  insertToTree(data1);
-  setTimeout(function () {
-    var data2 = new Data(new Name("/a/c/b"));
-    insertToTree(data2);
-    setTimeout(function() {
-      var data3 = new Data(new Name("/a/c/d"));
-      insertToTree(data3);
-    }, 1000);
-  }, 1000);
+  // Regular dummy data
+  setInterval(function () {
+    var components = getRandomInt(2, 6);
+    var dataName = new Name();
+    for (var i = 0; i < components; i ++) {
+      dataName.append(getRandomChar());
+    }
+    console.log("Dummy: adding data name " + dataName.toUri());
+    var data = new Data(dataName);
+    if (!paused) {
+      insertToTree(data);
+    }
+  }, 2000);
 
-  // setInterval(function () {
-  //   var components = getRandomInt(2, 6);
-  //   var dataName = new Name();
-  //   for (var i = 0; i < components; i ++) {
-  //     dataName.append(getRandomChar());
-  //   }
-  //   console.log("Dummy: adding data name " + dataName.toUri());
-  //   var data = new Data(dataName);
-  //   if (!paused) {
-  //     insertToTree(data);
-  //   }
-  // }, 2000);
-
-  // document.getElementById('pause').onclick = function () { 
-  //   if (paused) {
-  //     document.getElementById('pause').innerText = "Pause";
-  //     paused = false;
-  //   } else {
-  //     document.getElementById('pause').innerText = "Resume";
-  //     paused = true;
-  //   }
-  // };
+  document.getElementById('pause').onclick = function () { 
+    if (paused) {
+      document.getElementById('pause').innerText = "Pause";
+      paused = false;
+    } else {
+      document.getElementById('pause').innerText = "Resume";
+      paused = true;
+    }
+  };
 }
 
 function onData(interest, data) {
@@ -245,4 +234,34 @@ function onTimeout(interest) {
   } else {
     queuedInterests.push(newInterest);
   }
+}
+
+function sausageUnitTest() {
+  // Sausage test
+  var data1 = new Data(new Name("/a/b/c"));
+  insertToTree(data1);
+  setTimeout(function () {
+    var data2 = new Data(new Name("/a/c/b"));
+    insertToTree(data2);
+    setTimeout(function() {
+      var data3 = new Data(new Name("/a/c/d"));
+      insertToTree(data3);
+    }, 1000);
+  }, 1000);
+  
+  // Existing branch end test
+  var data1 = new Data(new Name("/a/b/a"));
+  insertToTree(data1);
+  var data1 = new Data(new Name("/a/a"));
+  insertToTree(data1);
+  setTimeout(function () {
+    var data2 = new Data(new Name("/a"));
+    insertToTree(data2);
+  }, 1000);
+
+  // Different branches
+  var data1 = new Data(new Name("/c/b"));
+  insertToTree(data1);
+  var data1 = new Data(new Name("/a/a"));
+  insertToTree(data1);
 }

@@ -210,33 +210,25 @@ function insertToTree(data) {
   var treeNode = root;
   var changed = null;
 
-  var isDone = false;
-
-  while (!isDone) {
-    if (treeNode["children"] === undefined) {
-      treeNode["children"] = [];
-    }
-    // if (treeNode["children"].length == 0) {
-    //   // no more children to try, we append the rest to the last component
-    //   while (idx < nameSize) {
-    //     treeNode["components"].push(dataName.get(idx).toEscapedString());
-    //     treeNode["name"] = treeNode["components"].join("/");
-    //     idx ++;
-    //   }
-    //   isDone = true;
-    //   changed = treeNode;
-    //   break;
-    // }
-    
+  if (treeNode["children"] === undefined) {
+    treeNode["children"] = [];
+  }
+  
+  while (idx < nameSize && treeNode["children"].length > 0) {
+    childMatch = false;
     for (var child in treeNode["children"]) {
       var tempNode = treeNode["children"][child];
-      console.log("has: " + tempNode["components"][0]);
-      console.log("want: " + dataName.get(idx).toEscapedString());
+
       if (tempNode["components"][0] == dataName.get(idx).toEscapedString()) {
+        childMatch = true;
         // this child matches the initial component
         idx += 1;
         for (var i = 1; i < tempNode["components"].length; i++) {
-          if (tempNode["components"][i] != dataName.get(idx).toEscapedString()) {
+          var matchComponent = ""
+          if (idx < nameSize) {
+            matchComponent = dataName.get(idx).toEscapedString();
+          }
+          if (tempNode["components"][i] != matchComponent) {
             // we cannot fully match with this node, need to break this node into two
             remainingComponents = tempNode["components"].slice(i, tempNode["components"].length);
             var remainingChild = {
@@ -245,78 +237,79 @@ function insertToTree(data) {
               "children": tempNode["children"]
             };
 
+            tempNode["components"] = tempNode["components"].slice(0, i);
+            tempNode["name"] = tempNode["components"].join("/");
+            
             var newChildComponents = [];
             while (idx < nameSize) {
               newChildComponents.push(dataName.get(idx).toEscapedString());
               idx ++;
             }
-
-            var newChild = {
-              "name": newChildComponents.join("/"),
-              "components": newChildComponents,
-              "children": []
-            };
-
-            tempNode["components"] = tempNode["components"].slice(0, i);
-            tempNode["children"] = [newChild, remainingChild];
-            tempNode["name"] = tempNode["components"].join("/");
+            
+            if (newChildComponents.length > 0) {
+              var newChild = {
+                "name": newChildComponents.join("/"),
+                "components": newChildComponents,
+                "children": []
+              };
+              tempNode["children"] = [newChild, remainingChild];
+              tempNode = newChild;
+            } else {
+              tempNode["children"] = [remainingChild];
+            }
             
             changed = tempNode;
-            treeNode = newChild;
-
-            isDone = true;
             break;
+          } else {
+            idx ++;
           }
         }
         // we can fully match with this node, need to try its children
-        if (!isDone) {
-          treeNode = tempNode;
-        } else {
-          break;
-        }
+        treeNode = tempNode;
+        break;
       }
     }
-
-    if (!isDone) {
-      // no children of tree node can match, we need to insert new nodes
-      var newChildComponents = [];
-      while (idx < nameSize) {
-        newChildComponents.push(dataName.get(idx).toEscapedString());
-        idx += 1;
-      }
-
-      var newChild = {
-        "name": newChildComponents.join("/"),
-        "components": newChildComponents,
-        "children": []
-      };
-
-      treeNode["children"].push(newChild);
-      isDone = true;
-      changed = treeNode;
-      treeNode = newChild;
+    if (!childMatch) {
+      break;
     }
   }
 
-  // insert data content object if not present
-  // only insert this "data content" node, if the full name is displayed
-  if (treeNode["children"].length === 0) {
-    var content = "";
-    try {
-      content = data.getContent().buf().toString('binary');
-    } catch (e) {
-      content = "NULL";
+  if (idx < nameSize) {
+    // no children of tree node can match, we need to insert new nodes
+    var newChildComponents = [];
+    while (idx < nameSize) {
+      newChildComponents.push(dataName.get(idx).toEscapedString());
+      idx += 1;
     }
 
-    var contentNode = {
-      "name": content,
-      "components": [content],
-      "is_content": true
+    var newChild = {
+      "name": newChildComponents.join("/"),
+      "components": newChildComponents,
+      "children": []
     };
-    // append to last treeNode
-    treeNode["children"].push(contentNode);
+
+    treeNode["children"].push(newChild);
+    isDone = true;
     changed = treeNode;
+    treeNode = newChild;
   }
+
+  // insert data content object after this insertion's end node
+  var content = "";
+  try {
+    content = data.getContent().buf().toString('binary');
+  } catch (e) {
+    content = "NULL";
+  }
+
+  var contentNode = {
+    "name": content,
+    "components": [content],
+    "is_content": true
+  };
+  // append to last treeNode
+  treeNode["children"].push(contentNode);
+  changed = treeNode;
 
   update(root);
 }
