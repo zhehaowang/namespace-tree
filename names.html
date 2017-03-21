@@ -24,10 +24,14 @@
     var treeView;
 
     var maxTreeDepth = -1;
-    var freshOnly = false;
+    var freshOnly = true;
+    var removeStaleFlag = false;
+
+    var defaultWaitTime = 100;
+    var interestQueue = [];
 
     var paused = false;
-    var queuedInterests = [];
+    var pauseQueuedInterests = [];
   </script>
 </head>
 
@@ -58,7 +62,9 @@
  
   <div id="options-section" style="float:left;">
     <p>Max tree depth: <input type="text" id="max-depth" value="" style="width:115px;"></input></p>
+    <p>Wait time: <input type="text" id="default-wait-time"></input></p>
     <p>Fresh data only: <input type="checkbox" id="fresh-data" checked></input></p>
+    <p>Remove stale data: <input type="checkbox" id="remove-stale-data" onclick="removeStaleData(this)"></input></p>
   </div>
 
   <div id="dummy-data-controller" style="float:left;">

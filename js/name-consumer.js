@@ -4,21 +4,30 @@ function connectFace() {
   // document.getElementById('collapseAll').onclick = function () { treeView.collapseAll(); };
   freshOnly = document.getElementById('fresh-data').checked;
   maxTreeDepth = document.getElementById('max-depth').value;
+  removeStaleFlag = document.getElementById('remove-stale-data').checked;
+  defaultWaitTime = document.getElementById('default-wait-time').value;
+
   if (maxTreeDepth == "") {
     maxTreeDepth = -1;
   } else {
     maxTreeDepth = parseInt(maxTreeDepth);
   }
 
+  if (defaultWaitTime == "") {
+    defaultWaitTime = 100;
+  } else {
+    defaultWaitTime = parseInt(defaultWaitTime);
+  }
+
   document.getElementById('pause').onclick = function () { 
     if (paused) {
       document.getElementById('pause').innerText = "Pause";
       paused = false;
-      for (var i; i < queuedInterests.length; i++) {
-        queuedInterests[i].setMustBeFresh(freshOnly);
+      for (var i; i < pauseQueuedInterests.length; i++) {
+        pauseQueuedInterests[i].setMustBeFresh(freshOnly);
         face.expressInterest(queuedInterests[i], onData, onTimeout);
       }
-      queuedInterests = [];
+      pauseQueuedInterests = [];
     } else {
       document.getElementById('pause').innerText = "Resume";
       paused = true;
@@ -29,8 +38,8 @@ function connectFace() {
   face = new Face({"host": host});
   prefix = document.getElementById("prefix").value;
   
-  // For this demo, hardcode intended interest names
   expressInterestWithExclusion(new Name(prefix));
+  expressInterestFromQueue();
 }
 
 // Internal mechanisms
@@ -73,11 +82,21 @@ function expressInterestWithExclusion(prefix, exclusion, leftmost, filterCertOrC
   }
   if (!paused) {
     interest.setMustBeFresh(freshOnly);
-    face.expressInterest(interest, onData, onTimeout);
+    // for regular interests, to avoid instant explosion, we also use a queue instead of just express interest
+    interestQueue.push(interest);
   } else {
-    queuedInterests.push(interest);
+    pauseQueuedInterests.push(interest);
   }
-  
+}
+
+function expressInterestFromQueue() {
+  if (interestQueue.length > 0) {
+    var interest = interestQueue.shift();
+    face.expressInterest(interest, onData, onTimeout);
+  }
+  setTimeout(function() {
+    expressInterestFromQueue();
+  }, defaultWaitTime);
 }
 
 function getRandomInt(min, max) {
@@ -150,13 +169,24 @@ function buildDummyTree() {
   };
 }
 
+function removeStaleData(element) {
+  removeStaleFlag = element.checked;
+}
+
 function onData(interest, data) {
   var dataName = data.getName();
   console.log("got data: " + dataName.toUri());
+
   if (dataName.size() == 0) {
     return;
   }
+
   insertToTree(data);
+  if (removeStaleFlag === true) {
+    setTimeout(function() {
+      removeFromTree(data);
+    }, data.getMetaInfo().getFreshnessPeriod());
+  }
 
   var interestName = interest.getName();
   // data is longer than interest, we probably should ask with exclusion
@@ -213,12 +243,17 @@ function onData(interest, data) {
     var exclusion = new Exclude();
     exclusion.appendAny();
     exclusion.appendComponent(component);
-    expressInterestWithExclusion(interestName, exclusion, true);
+    setTimeout(function() {
+      expressInterestWithExclusion(interestName, exclusion, true);
+    }, defaultWaitTime);
+    
     // ask for the first piece of data in a subnamespace, 
     // this data will be able to satisfy the interest, in that case, the next exclusion interest should fetch later data in that branch
     var newPrefix = new Name(dataName.getPrefix(interestName.size() + 1));
     console.log("new prefix: " + newPrefix.toUri());
-    expressInterestWithExclusion(newPrefix, undefined, true);
+    setTimeout(function() {
+      expressInterestWithExclusion(newPrefix, undefined, true);
+    }, defaultWaitTime * 2);
   } else {
     // data is no longer interest, we are done probing this branch
     console.log("finished probing this branch (data length = interest length): " + interestName.toUri());
@@ -234,9 +269,9 @@ function onTimeout(interest) {
   newInterest.refreshNonce();
   if (!paused) {
     newInterest.setMustBeFresh(freshOnly);
-    face.expressInterest(newInterest, onData, onTimeout);
+    interestQueue.push(newInterest);
   } else {
-    queuedInterests.push(newInterest);
+    pauseQueuedInterests.push(newInterest);
   }
 }
 
