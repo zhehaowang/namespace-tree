@@ -43,7 +43,6 @@ var svg = d3.select("#tree").append("svg")
 root = treeData[0];
 // root.x0 = height / 2;
 // root.y0 = 0;
-var treeNodeMerged = clone(root);
 
 update(root);
 
@@ -178,7 +177,7 @@ function update(source) {
   // });
 }
 
-// Toggle children on click.
+// Toggle children display on click.
 function click(d) {
   if (d.children) {
     d._children = d.children;
@@ -190,25 +189,110 @@ function click(d) {
   update(d);
 }
 
-/* original function */
+function removeFromTree(data) {
+  var dataName = data.getName();
+  var nameSize = dataName.size();
 
-function findAmongChildren(node, str) {
-  for (var child in node["children"]) {
-    if (node["children"][child]["components"][0] == str) {
-      return node["children"][child];
+  var treeNode = root;
+  var idx = 0;
+  
+  var matchStack = [root];
+
+  while (idx < nameSize && treeNode["children"].length > 0) {
+    childMatch = false;
+    for (var child in treeNode["children"]) {
+      var tempNode = treeNode["children"][child];
+
+      if (tempNode["components"][0] == dataName.get(idx).toEscapedString()) {
+        childMatch = true;
+        // this child matches the initial component
+        idx += 1;
+        for (var i = 1; i < tempNode["components"].length; i++) {
+          var matchComponent = "";
+          if (idx < nameSize) {
+            matchComponent = dataName.get(idx).toEscapedString();
+          }
+          if (tempNode["components"][i] != matchComponent) {
+            // we cannot fully match with this node, meaning no matching data entries exist
+            return -1;
+          } else {
+            idx ++;
+          }
+        }
+
+        // we can fully match with this node, need to try its children
+        matchStack.push(tempNode);
+        treeNode = tempNode;
+        break;
+      }
+    }
+    if (!childMatch) {
+      return -1;
     }
   }
-  return null;
+  
+  if (idx < nameSize) {
+    // we were at the end of our tree, yet still no match
+    return -1;
+  }
+  
+  // for each remove call, we remove one content element associated with what we've found
+  if (treeNode["children"].length == 0) {
+    // we found the name, but don't see any children in it
+    return -1;
+  }
+  var removeIdx = -1;
+  for (var childIdx = 0; childIdx < treeNode["children"].length; childIdx ++) {
+    if (treeNode["children"][childIdx]["is_content"] == true) {
+      removeIdx = childIdx;
+    }
+  }
+  
+  if (removeIdx < 0) {
+    // we found the name, but don't see data object associated with it
+    return -1;
+  }
+  
+  // we can now update the tree according to matchStack
+  while (matchStack.length > 0) {
+    var tempNode = matchStack.pop();
+    tempNode["children"].splice(removeIdx, 1);
+    removeIdx = -1;
+
+    // remove propagates to parent if needed
+    if (tempNode["children"].length == 0) {
+      if (matchStack.length > 0) {
+        var parentElement = matchStack[matchStack.length - 1];
+        for (var childIdx = 0; childIdx < parentElement["children"].length; childIdx ++ ) {
+          // object pointer equal check
+          if (parentElement["children"][childIdx] == tempNode) {
+            removeIdx = childIdx;
+            // console.log("remove: " + removeIdx);
+          }
+        }
+      }
+    } else if (tempNode["children"].length == 1 && tempNode["children"][0]["is_content"] !== true && tempNode != root) {
+      // merge if needed (except root)
+      var childNode = tempNode["children"][0];
+      tempNode["components"].push.apply(tempNode["components"], childNode["components"]);
+      tempNode["name"] = tempNode["components"].join("/");
+      tempNode["children"] = childNode["children"];
+    }
+    if (removeIdx < 0) {
+      break;
+    }
+  }
+
+  update(root);
+  return 0;
 }
 
 function insertToTree(data) {
   var dataName = data.getName();
-
-  var idx = 0;
   var nameSize = dataName.size();
 
   var treeNode = root;
-  var changed = null;
+  var idx = 0;
 
   if (treeNode["children"] === undefined) {
     treeNode["children"] = [];
@@ -224,7 +308,7 @@ function insertToTree(data) {
         // this child matches the initial component
         idx += 1;
         for (var i = 1; i < tempNode["components"].length; i++) {
-          var matchComponent = ""
+          var matchComponent = "";
           if (idx < nameSize) {
             matchComponent = dataName.get(idx).toEscapedString();
           }
@@ -258,7 +342,6 @@ function insertToTree(data) {
               tempNode["children"] = [remainingChild];
             }
             
-            changed = tempNode;
             break;
           } else {
             idx ++;
@@ -270,6 +353,7 @@ function insertToTree(data) {
       }
     }
     if (!childMatch) {
+      // we tried all the children of this tree node, and none can match, we break out of the outer loop
       break;
     }
   }
@@ -290,7 +374,6 @@ function insertToTree(data) {
 
     treeNode["children"].push(newChild);
     isDone = true;
-    changed = treeNode;
     treeNode = newChild;
   }
 
@@ -309,9 +392,21 @@ function insertToTree(data) {
   };
   // append to last treeNode
   treeNode["children"].push(contentNode);
-  changed = treeNode;
 
   update(root);
+}
+
+/**************************
+ * Older helper functions
+ **************************/
+
+function findAmongChildren(node, str) {
+  for (var child in node["children"]) {
+    if (node["children"][child]["components"][0] == str) {
+      return node["children"][child];
+    }
+  }
+  return null;
 }
 
 function debugTree(node) {

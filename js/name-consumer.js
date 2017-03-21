@@ -128,10 +128,14 @@ function buildDummyTree() {
     for (var i = 0; i < components; i ++) {
       dataName.append(getRandomChar());
     }
-    console.log("Dummy: adding data name " + dataName.toUri());
     var data = new Data(dataName);
-    if (!paused) {
+    if (!paused) {    
+      console.log("Dummy: adding data name " + dataName.toUri());
       insertToTree(data);
+      setTimeout(function () {
+        console.log("Dummy: removing data name " + dataName.toUri());
+        removeFromTree(data);
+      }, 7000);
     }
   }, 2000);
 
@@ -238,30 +242,31 @@ function onTimeout(interest) {
 
 function sausageUnitTest() {
   // Sausage test
-  var data1 = new Data(new Name("/a/b/c"));
+  var data1 = new Data(new Name("/b/c"));
   insertToTree(data1);
   setTimeout(function () {
-    var data2 = new Data(new Name("/a/c/b"));
+    var data2 = new Data(new Name("/c/b/b"));
     insertToTree(data2);
     setTimeout(function() {
-      var data3 = new Data(new Name("/a/c/d"));
+      removeFromTree(data1);
+      var data3 = new Data(new Name("/c/b/d"));
       insertToTree(data3);
     }, 1000);
   }, 1000);
   
   // Existing branch end test
-  var data1 = new Data(new Name("/a/b/a"));
-  insertToTree(data1);
-  var data1 = new Data(new Name("/a/a"));
-  insertToTree(data1);
-  setTimeout(function () {
-    var data2 = new Data(new Name("/a"));
-    insertToTree(data2);
-  }, 1000);
+  // var data1 = new Data(new Name("/a/b/a"));
+  // insertToTree(data1);
+  // var data1 = new Data(new Name("/a/a"));
+  // insertToTree(data1);
+  // setTimeout(function () {
+  //   var data2 = new Data(new Name("/a"));
+  //   insertToTree(data2);
+  // }, 1000);
 
-  // Different branches
-  var data1 = new Data(new Name("/c/b"));
-  insertToTree(data1);
-  var data1 = new Data(new Name("/a/a"));
-  insertToTree(data1);
+  // // Different branches
+  // var data1 = new Data(new Name("/c/b"));
+  // insertToTree(data1);
+  // var data1 = new Data(new Name("/a/a"));
+  // insertToTree(data1);
 }
