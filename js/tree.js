@@ -10,7 +10,10 @@ var treeData = [
   }
 ];
 
-var colorSet = ["#d1ebbb", "#7bafd0", "#deb276", "#92c3ad", "#f49158"];
+// var colorSet = ["#d1ebbb", "#7bafd0", "#deb276", "#92c3ad", "#f49158"];
+
+var colorSet = ["#d1ebbb", "#d1eccc", "#d1eddd"];
+var dataNodeColor = "#AAAAAA";
 
 // ************** Generate the tree diagram  *****************
 var width_total = 4000;
@@ -72,37 +75,19 @@ function update(source) {
     .attr("r", 1e-6)
     .style("fill", function(d) {
       if (d._children) {
-        return "#fff"
+        return "#fff";
       }
-      return colorSet[d.depth % 5];
-    })
-    .style("stroke", function(d) {
-      if (d._children) {
-        return "#000"
+      if (d.is_content) {
+        return dataNodeColor;
       }
-      return colorSet[d.depth % 5];
-    })
-    .style("stroke-width", function(d) {
-      if (d._children) {
-        return "2px";
-      }
-      return "1.5px";
+      return colorSet[d.depth % colorSet.length];
     });
 
   nodeEnter.append("text")
     .attr("x", function(d) { return d.children || d._children ? 0 : 0; })
     .attr("dy", "-1em")
     .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-    .text(function(d) {
-      if (cutOffLength < 0) {
-        return d.name;
-      }
-      if (d.name.length <= cutOffLength || d.is_content === true) {
-        return d.name;
-      } else {
-        return d.name.substring(0, cutOffLength);
-      }
-    })
+    .text(updateText)
     .style("fill-opacity", 1e-6);
 
   // Transition nodes to their new position.
@@ -114,22 +99,16 @@ function update(source) {
 
   nodeUpdate.select("circle")
     .attr("r", 10)
-    .style("fill", function(d) {
+    .style("stroke", function(d) {
       if (d._children) {
-        return "#fff"
+        return "#000";
       }
-      return colorSet[d.depth%5];
+      return '#fff';
     });
   
   nodeUpdate.select("text")
     .style("fill-opacity", 1)
-    .text(function(d) {
-      if (d.name.length <= cutOffLength || d.is_content === true) {
-        return d.name;
-      } else {
-        return d.name.substring(0, cutOffLength);
-      }
-    });
+    .text(updateText);
 
   // Transition exiting nodes to the parent's new position.
   var nodeExit = node.exit().transition()
@@ -176,6 +155,16 @@ function update(source) {
   //   d.x0 = d.x;
   //   d.y0 = d.y;
   // });
+}
+
+function updateText(d) {
+  if (cutOffLength <= 0) {
+    return d.name;
+  } else if (d.name.length <= cutOffLength || d.is_content === true) {
+    return d.name;
+  } else {
+    return d.name.substring(0, cutOffLength);
+  }
 }
 
 // Toggle children display on click.
@@ -372,8 +361,15 @@ function insertToTree(data) {
       "components": newChildComponents,
       "children": []
     };
-
-    treeNode["children"].push(newChild);
+    
+    if (maxBranchingFactor < 0) {
+      treeNode["children"].push(newChild);
+    } else if (treeNode["children"].length < maxBranchingFactor) {
+      treeNode["children"].push(newChild);
+    } else {
+      return;
+    }
+    
     isDone = true;
     treeNode = newChild;
   }

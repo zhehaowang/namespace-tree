@@ -29,6 +29,7 @@
 
     var defaultWaitTime = 100;
     var cutOffLength = -1;
+    var maxBranchingFactor = -1;
     var interestQueue = [];
 
     var paused = false;
@@ -73,16 +74,20 @@
     <table>
       <tr>
         <td>Max tree depth:</td> 
-        <td><input type="text" id="max-depth" value=""></input></td>
+        <td><input type="text" id="max-depth" value="-1"></input></td>
       </tr>
       <tr>
         <td>Interest expression interval:</td> 
-        <td><input type="text" id="default-wait-time"></input></td>
+        <td><input type="text" id="default-wait-time" value="100"></input></td>
       </tr>
       <tr>
         <td>Display name cutoff length:</td>   
-        <td><input type="text" id="cut-off-length"></input></td>
+        <td><input type="text" id="cut-off-length" value="-1"></input></td>
+      </tr>
       <tr>
+        <td>Max branching factor:</td>   
+        <td><input type="text" id="max-branching-factor" value="-1"></input></td>
+      </tr>
       <tr>
         <td>Fresh data only:</td> 
         <td><input type="checkbox" id="fresh-data" checked></input></td>

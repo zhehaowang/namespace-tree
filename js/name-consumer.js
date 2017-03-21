@@ -7,6 +7,7 @@ function connectFace() {
   removeStaleFlag = document.getElementById('remove-stale-data').checked;
   defaultWaitTime = document.getElementById('default-wait-time').value;
   cutOffLength = document.getElementById('cut-off-length').value;
+  maxBranchingFactor = document.getElementById('max-branching-factor').value;
 
   if (maxTreeDepth == "") {
     maxTreeDepth = -1;
@@ -23,7 +24,13 @@ function connectFace() {
   if (cutOffLength == "") {
     cutOffLength = -1;
   } else {
-    cutOffLengths = parseInt(cutOffLengths);
+    cutOffLengths = parseInt(cutOffLength);
+  }
+
+  if (maxBranchingFactor == "") {
+    maxBranchingFactor = -1;
+  } else {
+    maxBranchingFactor = parseInt(maxBranchingFactor);
   }
 
   document.getElementById('pause').onclick = function () { 
@@ -51,7 +58,8 @@ function connectFace() {
 
 // Internal mechanisms
 function expressInterestWithExclusion(prefix, exclusion, leftmost, filterCertOrCommandOrPicInterest) {
-  if (filterCertOrCommandOrPicInterest === undefined || filterCertOrCommandOrPicInterest === true) {
+  // don't filter interests specific to Flow by default
+  if (filterCertOrCommandOrPicInterest === true) {
     var prefixName = (new Name(prefix)).toUri();
     if (prefixName.indexOf("ID-CERT") > 0) {
       console.log("stop probing this branch because it contains a certificate name, or is a signed interest");
@@ -70,6 +78,7 @@ function expressInterestWithExclusion(prefix, exclusion, leftmost, filterCertOrC
       return;
     }
   }
+
   var interest = new Interest(new Name(prefix));
   interest.setInterestLifetimeMilliseconds(4000);
   interest.setMustBeFresh(true);
