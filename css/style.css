@@ -74,16 +74,22 @@ p{font-family:verdana; font-size:12px; margin:2px;}
 	width: 220px;
 	margin: 2px 20px;
 	background-color: #e2e2e2;
+	/* table inherits font options for p */
+	font-family:verdana; 
+	font-size:12px;
 }
 
 #options-section{
-	width: 240px;
+	width: 360px;
 	margin: 2px 40px;
 	background-color: #e2e2e2;
+	/* table inherits font options for p */
+	font-family:verdana; 
+	font-size:12px;
 }
 
 #dummy-data-controller{
-	width: 220px;
+	width: 100px;
 	margin: 2px 20px;
 	background-color: #e2e2e2;
 }

@@ -25,8 +25,6 @@ var i = 0,
   duration = 750,
   root;
 
-var cutOffLength = 10;
-
 var tree = d3.layout.tree()
   .size([height, width]);
 
@@ -96,6 +94,9 @@ function update(source) {
     .attr("dy", "-1em")
     .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
     .text(function(d) {
+      if (cutOffLength < 0) {
+        return d.name;
+      }
       if (d.name.length <= cutOffLength || d.is_content === true) {
         return d.name;
       } else {

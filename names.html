@@ -28,6 +28,7 @@
     var removeStaleFlag = false;
 
     var defaultWaitTime = 100;
+    var cutOffLength = -1;
     var interestQueue = [];
 
     var paused = false;
@@ -55,16 +56,42 @@
   <!-- CONTROLLER -->
   <div id="controller">
   <div id="connect-section">
-    <p>Host face: &nbsp;&nbsp;&nbsp;<input type="text" id="host" value="192.168.100.130" style="width:115px;"></input></p>
-    <p>Track prefix: <input type="text" id="prefix" value="/home" style="width:115px;"></input></p>
-    <p><button style="margin-left:112px;margin-right:0px;" id="connect" onclick="connectFace()">Connect Face</button></p>
+    <table>
+      <tr>
+        <td>Host face:</td> 
+        <td><input type="text" id="host" value="192.168.100.130" style="width:115px;"></input></td>
+      </tr>
+      <tr>
+        <td>Track prefix:</td> 
+        <td><input type="text" id="prefix" value="/home" style="width:115px;"></input></td>
+      </tr>
+    </table>
+    <button style="margin-left:112px;margin-right:0px;" id="connect" onclick="connectFace()">Connect Face</button>
   </div>
  
   <div id="options-section" style="float:left;">
-    <p>Max tree depth: <input type="text" id="max-depth" value="" style="width:115px;"></input></p>
-    <p>Wait time: <input type="text" id="default-wait-time"></input></p>
-    <p>Fresh data only: <input type="checkbox" id="fresh-data" checked></input></p>
-    <p>Remove stale data: <input type="checkbox" id="remove-stale-data" onclick="removeStaleData(this)"></input></p>
+    <table>
+      <tr>
+        <td>Max tree depth:</td> 
+        <td><input type="text" id="max-depth" value=""></input></td>
+      </tr>
+      <tr>
+        <td>Interest expression interval:</td> 
+        <td><input type="text" id="default-wait-time"></input></td>
+      </tr>
+      <tr>
+        <td>Display name cutoff length:</td>   
+        <td><input type="text" id="cut-off-length"></input></td>
+      <tr>
+      <tr>
+        <td>Fresh data only:</td> 
+        <td><input type="checkbox" id="fresh-data" checked></input></td>
+      </tr>
+      <tr>
+        <td>Remove stale data:</td> 
+        <td><input type="checkbox" id="remove-stale-data" onclick="removeStaleData(this)"></input></td>
+      </tr>
+    </table>
   </div>
 
   <div id="dummy-data-controller" style="float:left;">

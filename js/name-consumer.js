@@ -6,6 +6,7 @@ function connectFace() {
   maxTreeDepth = document.getElementById('max-depth').value;
   removeStaleFlag = document.getElementById('remove-stale-data').checked;
   defaultWaitTime = document.getElementById('default-wait-time').value;
+  cutOffLength = document.getElementById('cut-off-length').value;
 
   if (maxTreeDepth == "") {
     maxTreeDepth = -1;
@@ -17,6 +18,12 @@ function connectFace() {
     defaultWaitTime = 100;
   } else {
     defaultWaitTime = parseInt(defaultWaitTime);
+  }
+
+  if (cutOffLength == "") {
+    cutOffLength = -1;
+  } else {
+    cutOffLengths = parseInt(cutOffLengths);
   }
 
   document.getElementById('pause').onclick = function () { 
