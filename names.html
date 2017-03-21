@@ -30,7 +30,11 @@
     var defaultWaitTime = 100;
     var cutOffLength = -1;
     var maxBranchingFactor = -1;
+
+    // we express interest from this queue, instead of expressing (with exclusion) immediately when data is received
+    // to avoid explosion of interests
     var interestQueue = [];
+    var receivedContent = {};
 
     var paused = false;
     var pauseQueuedInterests = [];

@@ -189,6 +189,17 @@ function removeStaleData(element) {
   removeStaleFlag = element.checked;
 }
 
+function hashCode(str){
+  var hash = 0;
+  if (str.length == 0) return hash;
+  for (var i = 0; i < str.length; i++) {
+    var character = str.charCodeAt(i);
+    hash = ((hash<<5)-hash)+character;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}
+
 function onData(interest, data) {
   var dataName = data.getName();
   console.log("got data: " + dataName.toUri());
@@ -196,8 +207,13 @@ function onData(interest, data) {
   if (dataName.size() == 0) {
     return;
   }
-
-  insertToTree(data);
+  
+  // we block multiple data with the same name here
+  if (receivedContent[dataName.toUri()] === undefined) {
+    insertToTree(data);
+    receivedContent[dataName.toUri()] = true;
+  }
+  
   if (removeStaleFlag === true) {
     setTimeout(function() {
       removeFromTree(data);
@@ -259,23 +275,18 @@ function onData(interest, data) {
     var exclusion = new Exclude();
     exclusion.appendAny();
     exclusion.appendComponent(component);
-    setTimeout(function() {
-      expressInterestWithExclusion(interestName, exclusion, true);
-    }, defaultWaitTime);
+    expressInterestWithExclusion(interestName, exclusion, true);
     
     // ask for the first piece of data in a subnamespace, 
     // this data will be able to satisfy the interest, in that case, the next exclusion interest should fetch later data in that branch
     var newPrefix = new Name(dataName.getPrefix(interestName.size() + 1));
     console.log("new prefix: " + newPrefix.toUri());
-    setTimeout(function() {
-      expressInterestWithExclusion(newPrefix, undefined, true);
-    }, defaultWaitTime * 2);
+    expressInterestWithExclusion(newPrefix, undefined, true);
   } else {
     // data is no longer interest, we are done probing this branch
     console.log("finished probing this branch (data length = interest length): " + interestName.toUri());
     return;
   }
-  
 }
 
 function onTimeout(interest) {

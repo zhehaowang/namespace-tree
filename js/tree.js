@@ -74,9 +74,6 @@ function update(source) {
   nodeEnter.append("circle")
     .attr("r", 1e-6)
     .style("fill", function(d) {
-      if (d._children) {
-        return "#fff";
-      }
       if (d.is_content) {
         return dataNodeColor;
       }
