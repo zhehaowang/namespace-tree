@@ -211,8 +211,34 @@ function onData(interest, data) {
   
   // we block multiple data with the same name here
   if (receivedContent[dataName.toUri()] === undefined) {
-    insertToTree(data);
-    receivedContent[dataName.toUri()] = true;
+    var addedContentNode = insertToTree(data);
+    receivedContent[dataName.toUri()] = addedContentNode;
+    if (showTrustRelationship) {
+      try {
+        var signature = data.getSignature();
+        if (signature !== null && signature !== undefined) {
+          if (KeyLocator.canGetFromSignature(signature)) {
+            var signerName = signature.getKeyLocator().getKeyName();
+            var signerNameUri = signerName.toUri();
+            // we don't deal with self-signed for now
+            if (signerNameUri != dataName.toUri()) {
+              var signerContentNode = undefined;
+              if (receivedContent[signerNameUri] === undefined) {
+                // we may not actually fetch the cert, just to show signing relationship...
+                var dummySignerData = new Data(signerName);
+                signerContentNode = insertToTree(dummySignerData);
+                receivedContent[signerNameUri] = signerContentNode;
+              } else {
+                signerContentNode = receivedContent[signerNameUri];
+              }
+            }
+            multiParents.push({parent: signerContentNode, child: addedContentNode});
+          }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
   }
   
   if (removeStaleFlag === true) {

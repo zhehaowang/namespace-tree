@@ -301,7 +301,7 @@ function removeFromTree(data) {
   return 0;
 }
 
-function insertToTree(data) {
+function insertToTree(data, ignoreMaxBranchingDepth) {
   var dataName = data.getName();
   var nameSize = dataName.size();
 
@@ -388,9 +388,10 @@ function insertToTree(data) {
     
     if (maxBranchingFactor < 0) {
       treeNode["children"].push(newChild);
-    } else if (treeNode["children"].length < maxBranchingFactor) {
+    } else if (treeNode["children"].length < maxBranchingFactor || ignoreMaxBranchingDepth === true) {
       treeNode["children"].push(newChild);
     } else {
+      // not added, return defined
       return;
     }
     
@@ -416,6 +417,7 @@ function insertToTree(data) {
   treeNode["children"].push(contentNode);
 
   update(root);
+  return contentNode;
 }
 
 /**************************
