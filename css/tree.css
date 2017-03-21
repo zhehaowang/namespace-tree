@@ -21,3 +21,9 @@
   stroke: #ccc;
   stroke-width: 1.5px;
 }
+
+.additionalParentLink {
+  fill: none;
+  stroke: #ffff00;
+  stroke-width: 1.5px;
+}

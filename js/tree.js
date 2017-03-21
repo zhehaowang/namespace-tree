@@ -30,6 +30,7 @@ var i = 0,
 
 var tree = d3.layout.tree()
   .size([height, width]);
+var multiParents = [];
 
 var diagonal = d3.svg.diagonal()
   .projection(function(d) { return [d.y, d.x]; });
@@ -142,7 +143,7 @@ function update(source) {
   link.exit().transition()
     .duration(duration)
     .attr("d", function(d) {
-    var o = {x: source.x, y: source.y};
+      var o = {x: source.x, y: source.y};
       return diagonal({source: o, target: o});
     })
     .remove();
@@ -152,6 +153,32 @@ function update(source) {
   //   d.x0 = d.x;
   //   d.y0 = d.y;
   // });
+  
+  // for trust anchor links
+  if (showTrustRelationship) {
+    var multiLinks = svg.selectAll("g.additionalParentLink")
+      .data(multiParents, function(d) {
+        return d.child.id; 
+      });
+    
+    svg.selectAll('path.additionalParentLink').remove();
+    multiLinks.enter().insert("path", "g")
+      .attr("class", "additionalParentLink")
+      .attr("d", function(d) {
+        var oTarget = {
+          x: d.parent.x,
+          y: d.parent.y
+        };
+        var oSource = {
+          x: d.child.x,
+          y: d.child.y
+        };
+        return diagonal({
+          source: oSource,
+          target: oTarget
+        });
+      });
+  }
 }
 
 function updateText(d) {
@@ -384,6 +411,7 @@ function insertToTree(data) {
     "components": [content],
     "is_content": true
   };
+
   // append to last treeNode
   treeNode["children"].push(contentNode);
 

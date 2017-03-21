@@ -8,6 +8,7 @@ function connectFace() {
   defaultWaitTime = document.getElementById('default-wait-time').value;
   cutOffLength = document.getElementById('cut-off-length').value;
   maxBranchingFactor = document.getElementById('max-branching-factor').value;
+  showTrustRelationship = document.getElementById('show-trust-relationship').checked;
 
   if (maxTreeDepth == "") {
     maxTreeDepth = -1;
@@ -306,16 +307,27 @@ function sausageUnitTest() {
   // Sausage test
   var data1 = new Data(new Name("/b/c"));
   insertToTree(data1);
-  setTimeout(function () {
-    var data2 = new Data(new Name("/c/b/b"));
-    insertToTree(data2);
-    setTimeout(function() {
-      removeFromTree(data1);
-      var data3 = new Data(new Name("/c/b/d"));
-      insertToTree(data3);
-    }, 1000);
-  }, 1000);
+  var data2 = new Data(new Name("/c/b/b"));
+  insertToTree(data2);
+  var data3 = new Data(new Name("/c/b/d"));
+  insertToTree(data3);
   
+  var couplingParent1 = tree.nodes(root).filter(function(d) {
+    return d['name'] === '/';
+  })[0];
+
+  var couplingChild1 = tree.nodes(root).filter(function(d) {
+    return d['name'] === 'd';
+  })[0];
+
+  multiParents = [{
+    parent: couplingParent1,
+    child: couplingChild1
+  }];
+
+  var data2 = new Data(new Name("/c/b/e"));
+  insertToTree(data2);
+
   // Existing branch end test
   // var data1 = new Data(new Name("/a/b/a"));
   // insertToTree(data1);

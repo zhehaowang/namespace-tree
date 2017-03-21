@@ -26,6 +26,7 @@
     var maxTreeDepth = -1;
     var freshOnly = true;
     var removeStaleFlag = false;
+    var showTrustRelationship = false;
 
     var defaultWaitTime = 100;
     var cutOffLength = -1;
@@ -100,12 +101,16 @@
         <td>Remove stale data:</td> 
         <td><input type="checkbox" id="remove-stale-data" onclick="removeStaleData(this)"></input></td>
       </tr>
+      <tr>
+        <td>Show trust relationship:</td> 
+        <td><input type="checkbox" id="show-trust-relationship"></input></td>
+      </tr>
     </table>
   </div>
 
   <div id="dummy-data-controller" style="float:left;">
     <p><button style="width:115px;" id="dummy-tree" onclick="buildDummyTree()">Dummy Data</button></p>
-    <!-- <p><button style="width:115px;" id="unit-test-tree" onclick="sausageUnitTest()">Test</button></p> -->
+    <p><button style="width:115px;" id="unit-test-tree" onclick="sausageUnitTest()">Test</button></p>
     <p><button style="width:115px;" id="pause">Pause</button> </p>
     <p><button style="width:115px;" onclick="fullScreen()" id="full-screen">View Full Screen</button></p>
   </div>
