@@ -80,10 +80,13 @@ function update(source) {
       }
       return colorSet[d.depth % colorSet.length];
     });
+  
+  // append text on top of the nodes
+  var dy = getRandomInt(1, 3);
 
   nodeEnter.append("text")
     .attr("x", function(d) { return d.children || d._children ? 0 : 0; })
-    .attr("dy", "-1em")
+    .attr("dy", "-" + dy.toString() + "em")
     .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
     .text(updateText)
     .style("fill-opacity", 1e-6);
@@ -179,6 +182,12 @@ function update(source) {
         });
       });
   }
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function updateText(d) {
@@ -311,7 +320,7 @@ function insertToTree(data, ignoreMaxBranchingDepth) {
   if (treeNode["children"] === undefined) {
     treeNode["children"] = [];
   }
-  
+
   while (idx < nameSize && treeNode["children"].length > 0) {
     childMatch = false;
     for (var child in treeNode["children"]) {
@@ -363,6 +372,9 @@ function insertToTree(data, ignoreMaxBranchingDepth) {
         }
         // we can fully match with this node, need to try its children
         treeNode = tempNode;
+        if (treeNode["children"] === undefined) {
+          treeNode["children"] = [];
+        }
         break;
       }
     }
