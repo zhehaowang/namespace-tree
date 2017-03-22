@@ -181,6 +181,8 @@ function update(source) {
           target: oTarget
         });
       });
+  } else {
+    svg.selectAll('path.additionalParentLink').remove();
   }
 }
 

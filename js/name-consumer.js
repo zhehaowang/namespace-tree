@@ -186,8 +186,13 @@ function buildDummyTree() {
   };
 }
 
+// onclick fires after the check/uncheck takes place
 function removeStaleData(element) {
   removeStaleFlag = element.checked;
+}
+
+function toggleTrustRelationship(element) {
+  showTrustRelationship = element.checked;
 }
 
 function hashCode(str){
@@ -209,35 +214,44 @@ function onData(interest, data) {
     return;
   }
   
-  // we block multiple data with the same name here
+  // we block multiple data with the same name from being displayed in the tree here
   if (receivedContent[dataName.toUri()] === undefined) {
     var addedContentNode = insertToTree(data);
     receivedContent[dataName.toUri()] = addedContentNode;
-    if (showTrustRelationship) {
-      try {
-        var signature = data.getSignature();
-        if (signature !== null && signature !== undefined) {
-          if (KeyLocator.canGetFromSignature(signature)) {
-            var signerName = signature.getKeyLocator().getKeyName();
-            var signerNameUri = signerName.toUri();
-            // we don't deal with self-signed for now
-            if (signerNameUri != dataName.toUri()) {
-              var signerContentNode = undefined;
-              if (receivedContent[signerNameUri] === undefined) {
-                // we may not actually fetch the cert, just to show signing relationship...
-                var dummySignerData = new Data(signerName);
-                signerContentNode = insertToTree(dummySignerData);
-                receivedContent[signerNameUri] = signerContentNode;
-              } else {
-                signerContentNode = receivedContent[signerNameUri];
-              }
+    try {
+      // no matter if showTrustRelationship is toggled, we leave a trace for trust relationship links 
+      var signature = data.getSignature();
+      if (signature !== null && signature !== undefined) {
+        if (KeyLocator.canGetFromSignature(signature)) {
+          var signerName = signature.getKeyLocator().getKeyName();
+          var signerNameUri = signerName.toUri();
+          // we don't deal with self-signed for now
+          if (signerNameUri !== dataName.toUri()) {
+            var signerContentNode = undefined;
+            if (receivedContent[signerNameUri] === undefined) {
+              // we don't have the cert yet, we leave a placeholder
+              pendingTrustLinks[signerNameUri] = addedContentNode;
+              // var dummySignerData = new Data(signerName);
+              // signerContentNode = insertToTree(dummySignerData);
+              // receivedContent[signerNameUri] = signerContentNode;
+            } else {
+              // we already have the cert, push the links
+              signerContentNode = receivedContent[signerNameUri];
+              multiParents.push({parent: signerContentNode, child: addedContentNode});
             }
-            multiParents.push({parent: signerContentNode, child: addedContentNode});
           }
         }
-      } catch (e) {
-        console.log(e);
       }
+    } catch (e) {
+      console.log(e);
+    }
+
+    // if the new data we just inserted have a trace in the expected signers
+    // (we don't have the veresion number after ID-CERT)
+    var dataNameUriWithoutLastUri = dataName.getPrefix(-1).toUri()
+    if (dataNameUriWithoutLastUri in pendingTrustLinks) {
+      multiParents.push({parent: addedContentNode, child: pendingTrustLinks[dataNameUriWithoutLastUri]});
+      delete pendingTrustLinks[dataNameUriWithoutLastUri];
     }
   }
   
