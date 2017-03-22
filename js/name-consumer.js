@@ -299,8 +299,11 @@ function onData(interest, data) {
     var component = dataName.get(interestName.size());
     
     // ask for the next piece of data excluding the last component
-    var exclusion = new Exclude();
-    exclusion.appendAny();
+    var exclusion = interest.getExclude();
+    if (exclusion === undefined || exclusion === null) {
+      exclusion = new Exclude();
+    }
+    // instead of range exclusion, we use component exclusion to avoid missing some data
     exclusion.appendComponent(component);
     expressInterestWithExclusion(interestName, exclusion, true);
     
