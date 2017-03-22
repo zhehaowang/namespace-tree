@@ -168,6 +168,7 @@ function update(source) {
     multiLinks.enter().insert("path", "g")
       .attr("class", "additionalParentLink")
       .attr("d", function(d) {
+        console.log("** trust relationship append **");
         var oTarget = {
           x: d.parent.x,
           y: d.parent.y
