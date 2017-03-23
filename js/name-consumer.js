@@ -25,7 +25,7 @@ function connectFace() {
   if (cutOffLength == "") {
     cutOffLength = -1;
   } else {
-    cutOffLengths = parseInt(cutOffLength);
+    cutOffLength = parseInt(cutOffLength);
   }
 
   if (maxBranchingFactor == "") {

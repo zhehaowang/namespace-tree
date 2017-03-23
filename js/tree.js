@@ -3,7 +3,6 @@
  ************************************************/
 var treeData = [
   {
-    "name": "/",
     "components": [],
     "parent": "null",
     "children": []
@@ -70,7 +69,8 @@ function update(source) {
     .attr("transform", function(d) { 
       return "translate(" + source.y + "," + source.x + ")"; 
     })
-    .on("click", click);
+    .on("click", click)
+    .on("dblclick", doubleClick);
 
   nodeEnter.append("circle")
     .attr("r", 1e-6)
@@ -85,11 +85,13 @@ function update(source) {
   var dy = getRandomInt(1, 3);
 
   nodeEnter.append("text")
+    .attr("id", function(d) {  return "text-name-" + d.id.toString(); })
     .attr("x", function(d) { return d.children || d._children ? 0 : 0; })
     .attr("dy", "-" + dy.toString() + "em")
     .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
     .text(updateText)
-    .style("fill-opacity", 1e-6);
+    .style("fill-opacity", 1e-6)
+    .style("display", "block");
 
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
@@ -157,13 +159,14 @@ function update(source) {
   //   d.y0 = d.y;
   // });
   
-  // for trust anchor links
+  // for trust relationship links
   if (showTrustRelationship) {
     var multiLinks = svg.selectAll("g.additionalParentLink")
       .data(multiParents, function(d) {
         return d.child.id; 
       });
     
+    // remove the old links to refresh
     svg.selectAll('path.additionalParentLink').remove();
     multiLinks.enter().insert("path", "g")
       .attr("class", "additionalParentLink")
@@ -195,11 +198,20 @@ function getRandomInt(min, max) {
 
 function updateText(d) {
   if (cutOffLength <= 0) {
-    return d.name;
-  } else if (d.name.length <= cutOffLength || d.is_content === true) {
-    return d.name;
+    return d.components.join("/");
+  } else if (d.is_content === true) {
+    return d.components.join("/");
   } else {
-    return d.name.substring(0, cutOffLength);
+    var name = "";
+    for (var idx in d.components) {
+      var componentString = d.components[idx];
+      if (componentString.length > cutOffLength + 3) {
+        name += componentString.substring(0, cutOffLength) + ".../";
+      } else {
+        name += componentString + "/";
+      }
+    }
+    return name;
   }
 }
 
@@ -213,6 +225,18 @@ function click(d) {
     d._children = null;
   }
   update(d);
+}
+
+function doubleClick(d) {
+  var textElement = document.getElementById("text-name-" + d.id);
+  if (textElement !== undefined) {
+    console.log(textElement.style.display);
+    if (textElement.style.display === "block") {
+      textElement.style.display = "none";
+    } else {
+      textElement.style.display = "block";
+    }
+  }
 }
 
 function removeFromTree(data) {
@@ -301,7 +325,6 @@ function removeFromTree(data) {
       // merge if needed (except root)
       var childNode = tempNode["children"][0];
       tempNode["components"].push.apply(tempNode["components"], childNode["components"]);
-      tempNode["name"] = tempNode["components"].join("/");
       tempNode["children"] = childNode["children"];
     }
     if (removeIdx < 0) {
@@ -342,13 +365,11 @@ function insertToTree(data, ignoreMaxBranchingDepth) {
             // we cannot fully match with this node, need to break this node into two
             remainingComponents = tempNode["components"].slice(i, tempNode["components"].length);
             var remainingChild = {
-              "name": remainingComponents.join("/"),
               "components": remainingComponents,
               "children": tempNode["children"]
             };
 
             tempNode["components"] = tempNode["components"].slice(0, i);
-            tempNode["name"] = tempNode["components"].join("/");
             
             var newChildComponents = [];
             while (idx < nameSize) {
@@ -358,7 +379,6 @@ function insertToTree(data, ignoreMaxBranchingDepth) {
             
             if (newChildComponents.length > 0) {
               var newChild = {
-                "name": newChildComponents.join("/"),
                 "components": newChildComponents,
                 "children": []
               };
@@ -396,7 +416,6 @@ function insertToTree(data, ignoreMaxBranchingDepth) {
     }
 
     var newChild = {
-      "name": newChildComponents.join("/"),
       "components": newChildComponents,
       "children": []
     };
@@ -423,7 +442,6 @@ function insertToTree(data, ignoreMaxBranchingDepth) {
   }
 
   var contentNode = {
-    "name": content,
     "components": [content],
     "is_content": true
   };
